@@ -1,0 +1,14 @@
+$usr = Read-Host ("Enter Username")
+Get-ADUser $usr -Property LockedOut, passwordlastset, Enabled | Format-Table Name, Enabled, LockedOut, passwordlastset
+$prompt = Read-Host ("unlock OR reset")
+if ("unlock" -eq $prompt)
+{
+    Unlock-ADAccount $usr
+    Get-ADUser $usr -Property LockedOut | Format-Table Name, LockedOut
+}
+elseif ("reset" -eq $prompt)
+{
+    $passwd = Read-Host("Enter Password") 
+    Set-ADAccountPassword -Identity $usr -Reset -NewPassword (ConvertTo-SecureString -AsPlainText $passwd -Force)
+    Get-ADUser $usr -Property LockedOut | Format-Table Name, passwordlastset
+}
