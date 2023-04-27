@@ -1,5 +1,5 @@
 # : Script to automatically identify running processes which have logged errors with the WMI Provider Host
-# This should assist in de-obfuscating which client process is potentially causing system issues as a result of high CPU activity on the WMI process
+# This should assist in de-obfuscating which client process(es) are potentially causing system issues as a result of high CPU activity on the WMI host process
 # https://learn.microsoft.com/en-us/windows/win32/wmisdk/wmi-troubleshooting
 
 # Import Event logs for WMI-Activity and filter only errors (EventID: 5858)
