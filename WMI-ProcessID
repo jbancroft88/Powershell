@@ -1,0 +1,28 @@
+# : Script to automatically identify running processes which have logged errors with the WMI Provider Host
+# This should assist in de-obfuscating which client process is potentially causing system issues as a result of high CPU activity on the WMI process
+# https://learn.microsoft.com/en-us/windows/win32/wmisdk/wmi-troubleshooting
+
+# Import Event logs for WMI-Activity and filter only errors (EventID: 5858)
+$wmilog = Get-WinEvent Microsoft-Windows-WMI-Activity/Operational | Where-Object {$_.Id -eq "5858"} 
+
+# Filter only the "Message" column to remove unneccesary metadata from results
+$eventid = $wmilog | Select-Object -Property Message
+
+# Filter each string for the "Client Process ID" and put all unique entries into array
+# Note: the Message property is a multi-value XML string in an existing table of results (ie. a Table within a Table)
+# : To remove this layer of abstraction, the ClientProcessId value is therefore extracted from the string itself using replace functions:
+$ear = @()
+foreach ($event in $eventid) 
+{
+$cpid = $event -replace '(?=Component)(.\n|.)*' -replace "^.+(ClientProcessId)", '$1' -replace ";", "" -replace "ClientProcessId = ", ""
+   if ($ear -notcontains $cpid)
+   {
+    $ear += $cpid
+   }
+}                                                        
+
+# Compare PID's in the filtered list with running PID's to identify the executable process name. Output the results in the terminal window.
+foreach ($code in $ear)
+{
+    Get-Process | Where-Object {$_.Id -eq $code}
+}
