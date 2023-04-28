@@ -1,16 +1,24 @@
-# : Script to automatically identify running processes which have logged errors with the WMI Provider Host
-# This should assist in de-obfuscating which client process(es) are potentially causing system issues as a result of high CPU activity on the WMI host process
-# https://learn.microsoft.com/en-us/windows/win32/wmisdk/wmi-troubleshooting
+# A script to automatically identify running processes which have logged errors with the WMI Provider Host Service
+# This reveals which client process(es) execution could result in high CPU/Memory activity on the WmiPrvSE.exe process
 
-# Import Event logs for WMI-Activity and filter only errors (EventID: 5858)
+# This is common issue on Windows systems, and is acknowledged and documented by Microsoft under the following article:
+# https://learn.microsoft.com/en-us/troubleshoot/windows-server/system-management-components/high-cpu-usage-wmiprvse-process-regular-intervals
+# The article states that the workaround is to "Identify the process using a large number of handles or a large amount of memory" and terminate it.
+# However, the OS does not provide us with a method to quickly enumerate and investigate the number of potential candidates.
+# As a result, troubleshooting this problem can be very time consuming when checking log files and system infomation manually.
+
+# Import Event logs for WMI-Activity and filter only errors (EventID: 5858):
+
 $wmilog = Get-WinEvent Microsoft-Windows-WMI-Activity/Operational | Where-Object {$_.Id -eq "5858"} 
 
-# Filter only the "Message" column to remove unneccesary metadata from results
+# Filter only the "Message" column to remove unneccesary metadata from results:
+
 $eventid = $wmilog | Select-Object -Property Message
 
-# Filter each string for the "Client Process ID" and put all unique entries into array
-# Note: the Message property is a multi-value XML string in an existing table of results (ie. a Table within a Table)
-# : To remove this layer of abstraction, the ClientProcessId value is therefore extracted from the string itself using replace functions:
+# Filter each "Message" string for the "Client Process ID" and put all unique entries into array
+# The Message property is a multi-value XML string in an existing table of results (ie. a Table within a Table)
+# The ClientProcessId value must then be extracted from each instance of the string using replace functions:
+
 $ear = @()
 foreach ($event in $eventid) 
 {
@@ -21,8 +29,11 @@ $cpid = $event -replace '(?=Component)(.\n|.)*' -replace "^.+(ClientProcessId)",
    }
 }                                                        
 
-# Compare PID's in the filtered list with running PID's to identify the executable process name. Output the results in the terminal window.
+# Compare PID's in the filtered list with running processes to identify the executable process name(s). Print results in the terminal window:
+
 foreach ($code in $ear)
 {
     Get-Process | Where-Object {$_.Id -eq $code}
 }
+
+# Any process using more than 30,000 handles is likely to be causing system performance issues.
