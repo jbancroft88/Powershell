@@ -7,6 +7,8 @@
 # However, the OS does not provide us with a method to quickly identify the number of potential candidates.
 # As a result, troubleshooting this problem can be very time consuming when checking log files and system infomation manually.
 
+$ErrorActionPreference = "Stop"
+
 Write-Host("
 __        ____  __ ___    _____                _     _           _                 _            
 \ \      / /  \/  |_ _|  |_   _| __ ___  _   _| |__ | | ___  ___| |__   ___   ___ | |_ ___ _ __ 
@@ -16,28 +18,34 @@ __        ____  __ ___    _____                _     _           _              
 
                                J Bancroft - May 2023 - 1.0     
 
+===============================================================================================")
+$option = Read-Host("Select Mode
 ===============================================================================================
-
-Select Mode:
-------------
 
 [1]    Run Script on Local Machine
 [2]    Run Script on Remote Machine
 
-===============================================================================================
 ")
 
-# Choose Local/Remote mode then Import Event logs for WMI-Activity and filter only errors (EventID: 5858)
+# Import Event logs for WMI-Activity and filter only errors (EventID: 5858). Check user input selection.
 
 $wmilog = @()
-$option = Read-Host("> Enter Option [1/2] ")
 if ($option -eq "1")
     {
+        $hostname = "localhost"
         $wmilog = Get-WinEvent Microsoft-Windows-WMI-Activity/Operational | Where-Object {$_.Id -eq "5858"} 
     }
 elseif ($option -eq "2")
     {
-        $hostname = Read-Host("> Enter Hostname ")
+        $ErrorActionPreference = "Stop"
+        $hostname = Read-Host("
+===============================================================================================
+Enter Hostname
+===============================================================================================       
+
+")
+        Write-Host("
+! Collecting event data from [$hostname] This might take a while... ")
         $collectlog = Get-WinEvent Microsoft-Windows-WMI-Activity/Operational -ComputerName $hostname
         $wmilog = $collectlog | Where-Object {$_.Id -eq "5858"} 
     }
@@ -47,11 +55,11 @@ else
         exit
     }
 
-# Filter only the "Message" column to remove unneccesary metadata from results:
+# Filter only the "Message" column from results:
 
 $msglog = $wmilog | Select-Object -Property Message
 
-# Filter each "Message" string for the "Client Process ID" and put all unique entries into array
+# Filter each "Message" string to extract the "Client Process ID" value, then put unique values into array
 # The Message property is a multi-value, dynamic-length XML string in an existing table of results (ie. a Table within a Table)
 # The ClientProcessId value must then be extracted from each instance of the string using replace functions:
 
@@ -69,14 +77,13 @@ $cpid = $event -replace '(?=Component)(.\n|.)*' -replace "^.+(ClientProcessId)",
 
 Write-Host("
 ===============================================================================================
+Results
+===============================================================================================")
 
-RESULTS
--------
-")
-
+$prlist = Get-Process -ComputerName $hostname 
 foreach ($code in $ear)
 {
-    Get-Process | Where-Object {$_.Id -eq $code}
+    $prlist | Where-Object {$_.Id -eq $code}
 }
 
 #Note: Any process using more than 30,000 handles and/or very high memory utilization is likely to be causing system performance issues.
