@@ -44,6 +44,7 @@ elseif ($option -eq "2")
 else
     {
         Write-Host("Error: Input value not recognised. Exiting script...")
+        exit
     }
 
 # Filter only the "Message" column to remove unneccesary metadata from results:
