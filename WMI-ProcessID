@@ -45,7 +45,7 @@ Enter Hostname
 
 ")
         Write-Host("
-! Collecting event data from [$hostname] This might take a while... ")
+Collecting event data from $hostname - This might take a while... ")
         $collectlog = Get-WinEvent Microsoft-Windows-WMI-Activity/Operational -ComputerName $hostname
         $wmilog = $collectlog | Where-Object {$_.Id -eq "5858"} 
     }
@@ -85,6 +85,9 @@ foreach ($code in $ear)
 {
     $prlist | Where-Object {$_.Id -eq $code}
 }
+
+Read-Host -Prompt "
+"
 
 #Note: Any process using more than 30,000 handles and/or very high memory utilization is likely to be causing system performance issues.
 
