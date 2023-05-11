@@ -17,8 +17,8 @@ $$ |  $$ |$$$$$$$  |$$$$$$\ $$$$$$$$\ \$$$$$$  |
 ================================================
 ')
 
-$input = Read-Host("Enter Username")
-$spin = @($input -split " ")
+$uinput = Read-Host("Enter Username")
+$spin = @($uinput -split " ")
 if (("-s" -eq $spin[0]) -and ($null -ne $spin[1])) {
     $sqry = $spin[1]
     $wqry = '"' + $sqry + '*"'
