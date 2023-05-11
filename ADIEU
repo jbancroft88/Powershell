@@ -4,7 +4,7 @@
 
 # Optionally use the [-s] switch to perform a wildcard search
 # Ex: -s john
-# Will return a list of usernames beginning with "john"
+# Will return a list of usernames which contain "john"
 
 Write-Host('
 ================================================
@@ -21,7 +21,7 @@ $uinput = Read-Host("Enter Username")
 $spin = @($uinput -split " ")
 if (("-s" -eq $spin[0]) -and ($null -ne $spin[1])) {
     $sqry = $spin[1]
-    $wqry = '"' + $sqry + '*"'
+    $wqry = '"*' + $sqry + '*"'
     Get-ADUser -Filter "SamAccountName -like $wqry" | Format-Table SamAccountName
     $usr = Read-Host("Enter Username")
 }
