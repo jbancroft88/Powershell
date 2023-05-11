@@ -30,7 +30,7 @@ elseif (("-s" -eq $spin[0]) -and ($null -eq $spin[1])) {
     break
 }
 else {
-    $usr = input[0]
+    $usr = uinput
 }
 
 $usrobj = Get-ADUser $usr -Property *
