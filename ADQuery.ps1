@@ -1,4 +1,4 @@
-### NOTE: In order for the script to work, you must define the first 3 variables:
+### NOTE: In order for the script to work, the first 3 variables should be manually defined:
 # > Manually input the $ADSearchBase information of the domain controller (example placeholder below) 
 # > Update the the $pwdExpireDate .AddDays value based on the organization password reset policy (with negative numbers representing maximum password age in Days)
 # > Update the the $pwdThreshold to define date offset of soon-to-expire passwords (with positive numbers representing the offset in Days)
@@ -8,7 +8,7 @@ $ADSearchBase = "OU=Users,OU=London,DC=company,DC=net"
 $pwdExpireDate = (Get-Date).AddDays(-90)
 $pwdThreshold = 7
 
-# Collect user information from Domain Controller
+# Collect user account information from Domain Controller
 $ErrorActionPreference = "Stop"
 Write-Host("Querying Domain Controller...")
 $adusers = get-aduser -Filter * -SearchBase $ADSearchBase -properties passwordlastset, LockedOut, Enabled | Select-Object Name, passwordlastset, LockedOut, Enabled
@@ -23,8 +23,8 @@ $options = [System.Management.Automation.Host.ChoiceDescription[]]($ste,$expired
 
 # Filter data based on user choice
 do {
-$prompt = $Host.UI.PromptForChoice("Select Operation","----------------",$options,4)
-Write-Host("")
+    $prompt = $Host.UI.PromptForChoice("Select Operation","----------------",$options,4)
+    Write-Host("")
     if (0 -eq $prompt) {
         foreach ($user in $adusers) {
             if ($true -eq $user.Enabled) {
@@ -55,5 +55,6 @@ Write-Host("")
             if ($false -eq $user.Enabled) {
                 Write-Host($user.Name)
             }}
-    }    
+    }         
 } until (4 -eq $prompt)
+    
