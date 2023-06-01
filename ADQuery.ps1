@@ -25,7 +25,7 @@ $options = [System.Management.Automation.Host.ChoiceDescription[]]($ste,$expired
 do {
 $prompt = $Host.UI.PromptForChoice("Select Operation","----------------",$options,4)
 Write-Host("")
-	if (0 -eq $prompt) {
+    if (0 -eq $prompt) {
         foreach ($user in $adusers) {
             if ($true -eq $user.Enabled) {
                 $d = ($user.passwordlastset - $pwdExpireDate).Days
