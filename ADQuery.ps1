@@ -17,7 +17,7 @@ $adusers = get-aduser -Filter * -SearchBase $ADSearchBase -properties passwordla
 $ste = New-Object System.Management.Automation.Host.ChoiceDescription "&Soon-to-Expire PWDs","List accounts which password expires in < $pwdThreshold days"
 $expired = New-Object System.Management.Automation.Host.ChoiceDescription "&Expired PWDs","List accounts whose password have expired"
 $locked = New-Object System.Management.Automation.Host.ChoiceDescription "&Locked Accounts","List accounts which are currently locked"
-$disabled = New-Object System.Management.Automation.Host.ChoiceDescription "&Disabled","List accounts which are currently disabled"
+$disabled = New-Object System.Management.Automation.Host.ChoiceDescription "&Disabled Accounts","List accounts which are currently disabled"
 $cancel = New-Object System.Management.Automation.Host.ChoiceDescription "&Cancel","Cancel Operation / Exit Script"
 $options = [System.Management.Automation.Host.ChoiceDescription[]]($ste,$expired,$locked,$disabled,$cancel)
 
