@@ -1,7 +1,7 @@
 # A script to automatically identify running processes which have logged errors with the WMI Provider Host Service
 # This reveals which client process(es) execution are potentially resulting in excessive CPU/Memory activity on the WmiPrvSE.exe process
 
-# This is common issue on Windows systems, and is acknowledged and documented by Microsoft under the following article:
+# This is common issue on Windows systems, and is acknowledged and documented by Microsoft in the following article:
 # https://learn.microsoft.com/en-us/troubleshoot/windows-server/system-management-components/high-cpu-usage-wmiprvse-process-regular-intervals
 # The article states that the workaround is to "Identify the process using a large number of handles or a large amount of memory" and terminate it.
 # However, the OS does not provide us with a method to quickly identify the number of potential candidates.
