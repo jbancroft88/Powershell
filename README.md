@@ -8,7 +8,7 @@ Functions: Searching for usernames, Unlocking accounts, Resetting passwords, Que
 
 **ADQuery**
 
-*Queries domain controller to collect information on user accounts which have expired / soon-to-expire passwords, or which are locked / disabled.*
+*Queries Domain Controller to return information on user accounts which have expired / soon-to-expire passwords, or which are locked / disabled.*
 
 **WMI-Troubleshooter**
 
