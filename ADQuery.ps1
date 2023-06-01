@@ -1,6 +1,6 @@
 ### NOTE: In order for the script to work, you must define the first 3 variables:
 # > Manually input the $ADSearchBase information of the domain controller (example placeholder below) 
-# > Update the the $pwdExpireDate .AddDays value based on the organization password reset policy (with negative numbers. representing maximum password age in Days)
+# > Update the the $pwdExpireDate .AddDays value based on the organization password reset policy (with negative numbers representing maximum password age in Days)
 # > Update the the $pwdThreshold to define date offset of soon-to-expire passwords (with positive numbers representing the offset in Days)
 
 # Customise variables
